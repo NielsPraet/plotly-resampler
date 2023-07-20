@@ -10,6 +10,7 @@ __author__ = "Jonas Van Der Donckt"
 from .aggregation_interface import AbstractAggregator
 from .aggregators import (
     LTTB,
+    M4,
     EveryNthPoint,
     FuncAggregator,
     MinMaxAggregator,
@@ -32,4 +33,5 @@ __all__ = [
     "MinMaxAggregator",
     "MinMaxOverlapAggregator",
     "NoGapHandler",
+    "M4",
 ]
