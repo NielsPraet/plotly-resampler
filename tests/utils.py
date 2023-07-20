@@ -10,6 +10,7 @@ from plotly_resampler.aggregation.aggregation_interface import (
     DataAggregator,
     DataPointSelector,
 )
+from plotly_resampler.aggregation.aggregators import M4
 from plotly_resampler.aggregation.gap_handler_interface import AbstractGapHandler
 from plotly_resampler.aggregation.plotly_aggregator_parser import PlotlyAggregatorParser
 
@@ -38,6 +39,40 @@ def construct_hf_data_dict(hf_x, hf_y, **kwargs):
     hf_data_dict.update(kwargs)
     return hf_data_dict
 
+def construct_hf_financial_data(n_datapoints, start_value: float, normal_scale: float):
+    hf_y = [start_value]
+    current_y = start_value
+    for _ in range(n_datapoints):
+        current_y = abs(np.random.normal(current_y, size=1, scale=normal_scale)[0])
+        hf_y.append(current_y)
+
+    hf_y = pd.Series(hf_y)
+    hf_x = construct_index(hf_y, "datetime", date_freq="1min")
+    return (hf_x, hf_y)
+
+
+def construct_hf_financial_data_dict(
+        n_datapoints=2_000,
+        start_value: float = 50.0, 
+        normal_scale: float = 1.5, 
+        **kwargs
+    ):
+    (hf_x, hf_y) = construct_hf_financial_data(n_datapoints, start_value, normal_scale)
+    hf_data_dict = {
+        "x": hf_x,
+        "y": hf_y,
+        "axis_type": "date"
+        if isinstance(hf_x, pd.DatetimeIndex)
+        or pd.core.dtypes.common.is_datetime64_any_dtype(hf_x)
+        else "linear",
+        "downsampler": M4(),
+        "gap_handler": MedDiffGapHandler(),
+        "max_n_samples": 1_000
+    }
+
+    hf_data_dict.update(kwargs)
+    return hf_data_dict
+
 
 def wrap_aggregate(
     hf_x: np.ndarray | None = None,
@@ -58,7 +93,7 @@ def wrap_aggregate(
     return PlotlyAggregatorParser.aggregate(hf_trace_data, 0, len(hf_y))
 
 
-def construct_index(series: pd.Series, index_type: str) -> pd.Index:
+def construct_index(series: pd.Series, index_type: str, date_freq: str = "1ms") -> pd.Index:
     """Construct an index of the given type for the given series.
 
     series: pd.Series
@@ -69,9 +104,9 @@ def construct_index(series: pd.Series, index_type: str) -> pd.Index:
     if index_type == "range":
         return pd.RangeIndex(len(series))
     if index_type == "datetime":
-        return pd.date_range("1/1/2020", periods=len(series), freq="1ms")
+        return pd.date_range("1/1/2020", periods=len(series), freq=date_freq)
     if index_type == "timedelta":
-        return pd.timedelta_range(start="0s", periods=len(series), freq="1ms")
+        return pd.timedelta_range(start="0s", periods=len(series), freq=date_freq)
     if index_type == "float":
         return pd.Float64Index(np.arange(len(series)))
     if index_type == "int":
