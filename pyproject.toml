@@ -1,12 +1,12 @@
 [tool.poetry]
 name = "plotly-resampler"  # Do not forget to update the __init__.py __version__ variable
-version = "0.9.0rc6"
+version = "0.9.1"
 description = "Visualizing large time series with plotly"
 authors = ["Jonas Van Der Donckt", "Jeroen Van Der Donckt", "Emiel Deprost"]
 readme = "README.md"
 license = "MIT"
 repository = "https://github.com/predict-idlab/plotly-resampler"
-documentation = "https://predict-idlab.github.io/plotly-resampler"
+documentation = "https://predict-idlab.github.io/plotly-resampler/latest"
 keywords = ["time-series", "visualization", "resampling", "plotly", "plotly-dash"]
 packages = [
     { include = "plotly_resampler" }
@@ -34,9 +34,9 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.7.1"
-jupyter-dash = ">=0.4.2"
+jupyter-dash = { version = ">=0.4.2", optional = true }
 plotly = "^5.5.0"
-dash = "^2.2.0"
+dash = "^2.11.0"
 pandas = ">=1"
 trace-updater = ">=0.0.8"
 numpy = [
@@ -52,7 +52,7 @@ tsdownsample = "0.1.2"
 
 [tool.poetry.extras]
 # Optional dependencies
-inline_persistent = ["kaleido", "Flask-Cors"]
+inline_persistent = ["kaleido", "Flask-Cors", "jupyter-dash"]
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
@@ -62,9 +62,6 @@ pytest-selenium = "^2.0.1"
 webdriver-manager = "^3.5.2"
 selenium-wire = "^5.0"
 pyarrow = "^10.0"
-Sphinx = "^4.4.0"
-pydata-sphinx-theme = "^0.13.3"
-sphinx-autodoc-typehints = "^1.17.0"
 ipywidgets = "^7.7.1"
 memory-profiler = "^0.60.0"
 line-profiler = "^4.0"
@@ -72,6 +69,17 @@ ruff = "^0.0.262"
 black = "^22.6.0"
 pytest-lazy-fixture = "^0.6.3"
 # yep = "^0.4"  # c code profiling
+mkdocs = "^1.4.3"
+mkdocstrings = { version = "^0.20.0", extras = ["python"] }
+griffe = [
+    { version = "^0.30.1", python = "<3.8" },
+    { version = ">=0.32.0", python = ">=3.8" }
+]
+mkdocs-gen-files = "^0.5.0"
+mike = "^1.1.2"
+mkdocs-material = "^9.1.18"
+mkdocs-literate-nav = "^0.6.0"
+mkdocs-section-index = "^0.3.5"
 
 # Linting
 [tool.ruff]
